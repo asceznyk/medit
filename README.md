@@ -1,4 +1,4 @@
-# crate: a small text editor #
+# pyditor: a small text editor #
 
 This is a follow along for a tutorial
 
