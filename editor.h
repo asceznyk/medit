@@ -1,6 +1,3 @@
-#include <string.h>
-#include <sys/ioctl.h>
-
 struct abuf {
 	char *b;
 	int len;
@@ -106,17 +103,23 @@ int editorReadKey() {
 void editorDrawRows(struct abuf *ab) {
 	int y;
 	for(y = 0; y < E.srows; y++) {
-		if(y == E.srows/2) {
-			char welcome[80];
-			int wlen = snprintf(welcome, sizeof(welcome), 
-					"medit - (more)edit -- version %s", MEDIT_VERSION);
-			if(wlen > E.scols) wlen = E.scols;
-			int padding = (E.scols - wlen) / 2;
-			if (padding) abAppend(ab, "~", 1);
-			while(padding--) abAppend(ab, " ", 1);
-			abAppend(ab, welcome, wlen);
+		if(y >= E.numrows) {
+			if(E.numrows == 0 && y == E.srows/2) {
+				char welcome[80];
+				int wlen = snprintf(welcome, sizeof(welcome), 
+						"medit - (more)edit -- version %s", MEDIT_VERSION);
+				if(wlen > E.scols) wlen = E.scols;
+				int padding = (E.scols - wlen) / 2;
+				if (padding) abAppend(ab, "~", 1);
+				while(padding--) abAppend(ab, " ", 1);
+				abAppend(ab, welcome, wlen);
+			} else {
+				abAppend(ab, "~", 1);
+			} 
 		} else {
-			abAppend(ab, "~", 1);
+			int len = E.row.size;
+			if (len > E.scols) len = E.scols;
+			abAppend(ab, E.row.chars, len);
 		}
 
 		abAppend(ab, "\x1b[K", 3);

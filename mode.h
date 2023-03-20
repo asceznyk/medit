@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 void disableRawMode() {
 	if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.o_term) == -1)
 		die("tcsetattr");
