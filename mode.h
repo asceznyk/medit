@@ -1,4 +1,3 @@
-#include <termios.h>
 #include <stdlib.h>
 
 void disableRawMode() {

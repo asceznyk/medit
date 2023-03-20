@@ -21,7 +21,7 @@ void abFree(struct abuf *ab) {
 	free(ab->b);
 }
 
-int getCursorPosition(int *rows, int *cols) {
+int getCursorPosition(int *srows, int *scols) {
 	char buf[32];
   unsigned int i = 0;
   
@@ -36,21 +36,21 @@ int getCursorPosition(int *rows, int *cols) {
 	buf[i] = '\0';
 
 	if (buf[0] != '\x1b' || buf[1] != '[') return -1;
-	if (sscanf(&buf[2], "%d;%d", rows, cols) != 2) return -1;
+	if (sscanf(&buf[2], "%d;%d", srows, scols) != 2) return -1;
 
 	return 0;
 }
 
-int getWindowSize(int *rows, int *cols) {
+int getWindowSize(int *srows, int *scols) {
 	struct winsize ws;
 
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
 		if(write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12) return -1;
-		getCursorPosition(rows, cols);
+		getCursorPosition(srows, scols);
 	}
 
-	*cols = ws.ws_col;
-	*rows = ws.ws_row;
+	*scols = ws.ws_col;
+	*srows = ws.ws_row;
 	return 0;
 }
 
@@ -105,13 +105,13 @@ int editorReadKey() {
 
 void editorDrawRows(struct abuf *ab) {
 	int y;
-	for(y = 0; y < E.rows; y++) {
-		if(y == E.rows/2) {
+	for(y = 0; y < E.srows; y++) {
+		if(y == E.srows/2) {
 			char welcome[80];
 			int wlen = snprintf(welcome, sizeof(welcome), 
 					"medit - (more)edit -- version %s", MEDIT_VERSION);
-			if(wlen > E.cols) wlen = E.cols;
-			int padding = (E.cols - wlen) / 2;
+			if(wlen > E.scols) wlen = E.scols;
+			int padding = (E.scols - wlen) / 2;
 			if (padding) abAppend(ab, "~", 1);
 			while(padding--) abAppend(ab, " ", 1);
 			abAppend(ab, welcome, wlen);
@@ -120,7 +120,7 @@ void editorDrawRows(struct abuf *ab) {
 		}
 
 		abAppend(ab, "\x1b[K", 3);
-		if(y < E.rows-1) abAppend(ab, "\r\n", 2);
+		if(y < E.srows-1) abAppend(ab, "\r\n", 2);
 	}
 }
 
@@ -148,13 +148,13 @@ void editorMoveCursor(int key) {
 			if(E.cx != 0) E.cx--;
 			break;
 		case ARROW_RIGHT:
-			if(E.cx != E.cols-1) E.cx++;
+			if(E.cx != E.scols-1) E.cx++;
 			break;
 		case ARROW_UP:
 			if(E.cy != 0) E.cy--;
 			break;
 		case ARROW_DOWN:
-			if(E.cy != E.rows-1) E.cy++;
+			if(E.cy != E.srows-1) E.cy++;
 			break;
 	}
 }
@@ -174,13 +174,13 @@ void editorProcessKeypress() {
 			break;
 
 		case END_KEY:
-			E.cx = E.cols-1;
+			E.cx = E.scols-1;
 			break;
 
 		case PAGE_UP:
 		case PAGE_DOWN:
 			{
-				int times = E.rows;
+				int times = E.srows;
 				while(times--) editorMoveCursor(c == PAGE_UP ? ARROW_UP : ARROW_DOWN);
 			}
 			break;
@@ -197,7 +197,8 @@ void editorProcessKeypress() {
 void initEditor() {
 	E.cx = 0;
 	E.cy = 0;
+	E.numrows = 0;
 
-	if(getWindowSize(&E.rows, &E.cols) == -1) die("getWindowSize");
+	if(getWindowSize(&E.srows, &E.scols) == -1) die("getWindowSize");
 }
 
