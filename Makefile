@@ -1,3 +1,3 @@
-crate: crate.c
-	$(CC) crate.c -o crate -Wall -Wextra -pedantic -std=c99
+medit: medit.c
+	$(CC) medit.c -o medit -Wall -Wextra -pedantic -std=c99
 
