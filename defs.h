@@ -1,3 +1,7 @@
+#define _DEFAULT_SOURCE
+#define _BSD_SOURCE
+#define _GNU_SOURCE
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -33,6 +37,8 @@ struct editorConfig {
 	int cx, cy;
 	int srows;
 	int scols;
+	int rowoff;
+	int coloff;
 	int numrows;
 	erow *row;
 	struct termios o_term;
