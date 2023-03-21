@@ -7,7 +7,7 @@ struct abuf {
 
 void abAppend(struct abuf *ab, const char *s, int len) {
 	char *update = realloc(ab->b, ab->len+len);
-
+	
 	if(update == NULL) return;
 	memcpy(update+ab->len, s, len);
 	ab->b = update;
