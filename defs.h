@@ -4,6 +4,7 @@
 
 #include <ctype.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,10 +14,15 @@
 #include <unistd.h>
 
 #define MEDIT_VERSION "0.0.1"
+#define MEDIT_TABSTOP 4
+#define MEDIT_QUITTIMES 3
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
+#define ABUF_INIT {NULL, 0}
+
 enum editorKey {
+	BACKSPACE = 127,
 	ARROW_LEFT = 1000,
 	ARROW_RIGHT,
 	ARROW_UP,
@@ -30,17 +36,22 @@ enum editorKey {
 
 typedef struct erow {
 	int size;
+	int rsize;
 	char *chars;
+	char *render;
 } erow;
 
 struct editorConfig {
 	int cx, cy;
+	int rx;
 	int srows;
 	int scols;
 	int rowoff;
 	int coloff;
 	int numrows;
 	erow *row;
+	int dirty;
+	char *filename;
 	struct termios o_term;
 };
 struct editorConfig E;
