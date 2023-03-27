@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 		editorRefreshScreen();
 		editorProcessKeypress();
 	}
-	
+
 	return 0;
 }
 

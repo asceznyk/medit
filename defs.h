@@ -6,16 +6,17 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/types.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 
 #define MEDIT_VERSION "0.0.1"
 #define MEDIT_TABSTOP 4
-#define MEDIT_QUITTIMES 3
 
 #define CTRL_KEY(k) ((k) & 0x1f)
 
@@ -34,11 +35,17 @@ enum editorKey {
 	PAGE_DOWN
 };
 
+enum editorHighlight {
+	HL_NORMAL = 0,
+	HL_NUMBER
+};
+
 typedef struct erow {
 	int size;
 	int rsize;
 	char *chars;
 	char *render;
+	unsigned char *hl;
 } erow;
 
 struct editorConfig {
@@ -52,6 +59,8 @@ struct editorConfig {
 	erow *row;
 	int dirty;
 	char *filename;
+	char statusmsg[80];
+	time_t statusmsg_time;
 	struct termios o_term;
 };
 struct editorConfig E;
