@@ -94,7 +94,7 @@ struct editorConfig E;
 char *py_hl_exts[] = {".py", NULL};
 char *py_hl_keywords[] = {
 	"print>", "abs>", "all>", "ascii>", "int>", "bool>", "str>", 
-	"dict>", "float>", "min>", "max>",
+	"dict>", "float>", "min>", "max>", "range>",
 
 	"False|","None|","True|",
 

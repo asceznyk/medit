@@ -54,7 +54,7 @@ int getWindowSize(int *srows, int *scols) {
 }
 
 int is_separator(int c) {
-  return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];", c) != NULL;
+  return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];:", c) != NULL;
 }
 
 void editorUpdateSyntax(erow *row) {
@@ -188,7 +188,7 @@ int editorSyntaxToColor(int hl) {
 		case HL_MLCOMMENT: return 36;
 		case HL_KEYWORD1: return 31;
 		case HL_KEYWORD2: return 34;
-		case HL_KEYWORD3: return 35; 
+		case HL_KEYWORD3: return 32; 
 		case HL_NUMBER: return 34;
 		case HL_MATCH: return 34;
 		default: return 37;
@@ -609,7 +609,7 @@ void editorWelcomeMessage(struct abuf *ab, const char *fmt, const char *msg) {
 void editorDrawRows(struct abuf *ab) { 
 	const char *fstring[] = {
 		"medit - (more)edit -- version %s",
-		"Ctrl-S = save | Ctrl-Q/C = quit | Ctrl-F = find",
+		"Ctrl-S = save | Ctrl-Q = quit | Ctrl-F = find",
 	};
 
 	const char *fmsgs[] = {
@@ -808,7 +808,6 @@ void editorProcessKeypress() {
 			editorInsertNewline();
 			break;
 
-		case CTRL_KEY('c'):
     case CTRL_KEY('q'):
       write(STDOUT_FILENO, "\x1b[2J", 4);
       write(STDOUT_FILENO, "\x1b[H", 3);
