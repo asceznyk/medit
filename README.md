@@ -1,4 +1,5 @@
 # medit: a small text editor #
 
-This is a follow along for a tutorial
+A small text editor written in C as a follow along to this tutorial https://viewsourcecode.org/snaptoken/kilo/ 
+
 
