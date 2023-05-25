@@ -5,7 +5,7 @@ struct abuf {
 
 void abAppend(struct abuf *ab, const char *s, int len) {
 	char *update = realloc(ab->b, ab->len+len);
-	
+
 	if(update == NULL) return;
 	memcpy(update+ab->len, s, len);
 	ab->b = update;
@@ -22,15 +22,15 @@ char *editorPrompt(char *prompt, void (*callback)(char *, int));
 
 int getCursorPosition(int *srows, int *scols) {
 	char buf[32];
-  unsigned int i = 0;
-  
+	unsigned int i = 0;
+
 	if (write(STDOUT_FILENO, "\x1b[6n", 4) != 4) return -1;
-  
+
 	while (i < sizeof(buf)-1) {
-    if (read(STDIN_FILENO, &buf[i], 1) != 1) break;
-    if (buf[i] == 'R') break;
-    i++;
-  }
+		if (read(STDIN_FILENO, &buf[i], 1) != 1) break;
+		if (buf[i] == 'R') break;
+		i++;
+	}
 
 	buf[i] = '\0';
 
@@ -54,7 +54,7 @@ int getWindowSize(int *srows, int *scols) {
 }
 
 int is_separator(int c) {
-  return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];:", c) != NULL;
+	return isspace(c) || c == '\0' || strchr(",.()+-/*=~%<>[];:", c) != NULL;
 }
 
 void editorUpdateSyntax(erow *row) {
@@ -131,9 +131,9 @@ void editorUpdateSyntax(erow *row) {
 
 		if (E.syntax->flags & HL_HIGHLIGHT_NUMBERS) {
 			if(
-				(isdigit(c) &&  (prev_sep || prev_hl == HL_NUMBER)) ||
-				(c == '.' && prev_hl == HL_NUMBER)
-			) {
+					(isdigit(c) &&  (prev_sep || prev_hl == HL_NUMBER)) ||
+					(c == '.' && prev_hl == HL_NUMBER)
+			  ) {
 				row->hl[i] = HL_NUMBER;
 				i++;
 				prev_sep = 0;
@@ -149,9 +149,9 @@ void editorUpdateSyntax(erow *row) {
 				if (kwalt) klen--;	
 
 				if(
-					!strncmp(&row->render[i], keywords[j], klen) &&
-					is_separator(row->render[i+klen])
-				) {
+						!strncmp(&row->render[i], keywords[j], klen) &&
+						is_separator(row->render[i+klen])
+				  ) {
 
 					int kwhl = HL_KEYWORD1;
 					if(kwalt) {
@@ -207,9 +207,9 @@ void editorSelectSyntaxHighlight() {
 		while(s->filematch[i]) {
 			int is_ext = (s->filematch[i][0] == '.');
 			if (
-				(is_ext && ext && !strcmp(ext, s->filematch[i])) || 
-				(!is_ext && strstr(E.filename, s->filematch[i])) 
-				) {
+					(is_ext && ext && !strcmp(ext, s->filematch[i])) || 
+					(!is_ext && strstr(E.filename, s->filematch[i])) 
+			   ) {
 				E.syntax = s;
 
 				int frow;
@@ -280,7 +280,7 @@ void editorInsertRow(int at, char *s, size_t len) {
 	for(int j = at+1; j <= E.numrows; j++) E.row[j].idx++;
 
 	E.row[at].idx = at;
-	
+
 	E.row[at].size = len;
 	E.row[at].chars = malloc(len+1);
 	memcpy(E.row[at].chars, s, len);
@@ -433,19 +433,19 @@ void editorSave() {
 
 	int fd = open(E.filename, O_RDWR | O_CREAT, 0644);
 	if (fd != -1) {
-    if (ftruncate(fd, len) != -1) {
-      if (write(fd, buf, len) == len) {
-        close(fd);
-        free(buf);
+		if (ftruncate(fd, len) != -1) {
+			if (write(fd, buf, len) == len) {
+				close(fd);
+				free(buf);
 				E.dirty = 0;
 				editorSetStatusMessage("%d bytes written", len);
-        return;
-      }
-    }
-    close(fd);
-  }
+				return;
+			}
+		}
+		close(fd);
+	}
 
-  free(buf);
+	free(buf);
 	editorSetStatusMessage("Can't save! I/O error: %s", strerror(errno));
 }
 
@@ -535,16 +535,16 @@ int editorReadKey() {
 			if(seq[1] >= '0' && seq[1] <= '9') {
 				if(read(STDIN_FILENO, &seq[2], 1) != 1) return '\x1b';
 				if (seq[2] == '~') {
-          switch (seq[1]) {
-            case '1': return HOME_KEY;
+					switch (seq[1]) {
+						case '1': return HOME_KEY;
 						case '3': return DEL_KEY;
-            case '4': return END_KEY;
-            case '5': return PAGE_UP;
-            case '6': return PAGE_DOWN;
-            case '7': return HOME_KEY;
-            case '8': return END_KEY;
-          }
-        }
+						case '4': return END_KEY;
+						case '5': return PAGE_UP;
+						case '6': return PAGE_DOWN;
+						case '7': return HOME_KEY;
+						case '8': return END_KEY;
+					}
+				}
 			} else {
 				switch (seq[1]) {
 					case 'A': return ARROW_UP;
@@ -593,11 +593,11 @@ void editorWelcomeMessage(struct abuf *ab, const char *fmt, const char *msg) {
 
 	char welcome[wmax];
 	int wlen = snprintf(
-		welcome, 
-		sizeof(welcome), 
-		fmt,
-		msg
-	);
+			welcome, 
+			sizeof(welcome), 
+			fmt,
+			msg
+			);
 
 	if(wlen > E.scols) wlen = E.scols;
 	int padding = (E.scols - wlen) / 2;
@@ -676,16 +676,16 @@ void editorDrawRows(struct abuf *ab) {
 void editorDrawStatusBar(struct abuf *ab) {
 	char status[80], rstatus[80];
 	int len = snprintf(
-		status, 
-		sizeof(status),
-		"%.20s %.60s", E.filename ? E.filename : "[No Name]", E.statusmsg 
-	);
+			status, 
+			sizeof(status),
+			"%.20s %.60s", E.filename ? E.filename : "[No Name]", E.statusmsg 
+			);
 	int rlen = snprintf(
-		rstatus, 
-		sizeof(rstatus),
-		"%s | %d/%d", E.syntax ? E.syntax->filetype : "text", E.cy+1, E.numrows
-	);
-	
+			rstatus, 
+			sizeof(rstatus),
+			"%s | %d/%d", E.syntax ? E.syntax->filetype : "text", E.cy+1, E.numrows
+			);
+
 	if (len > E.scols) len = E.scols;
 	abAppend(ab, status, len);
 	while(len < E.scols) {
@@ -713,7 +713,7 @@ void editorRefreshScreen() {
 	char buf[32];
 	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", (E.cy-E.rowoff) + 1, (E.rx-E.coloff) + 1);
 	abAppend(&ab, buf, strlen(buf));
-	
+
 	abAppend(&ab, "\x1b[?25h", 6);
 
 	write(STDOUT_FILENO, ab.b, ab.len);
@@ -721,11 +721,11 @@ void editorRefreshScreen() {
 }
 
 void editorSetStatusMessage(const char *fmt, ...) {
-  va_list ap;
-  va_start(ap, fmt);
-  vsnprintf(E.statusmsg, sizeof(E.statusmsg), fmt, ap);
-  va_end(ap);
-  E.statusmsg_time = time(NULL);
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(E.statusmsg, sizeof(E.statusmsg), fmt, ap);
+	va_end(ap);
+	E.statusmsg_time = time(NULL);
 }
 
 char *editorPrompt(char *prompt, void (*callback)(char *, int)) {
@@ -808,11 +808,11 @@ void editorProcessKeypress() {
 			editorInsertNewline();
 			break;
 
-    case CTRL_KEY('q'):
-      write(STDOUT_FILENO, "\x1b[2J", 4);
-      write(STDOUT_FILENO, "\x1b[H", 3);
-      exit(0);
-      break;
+		case CTRL_KEY('q'):
+			write(STDOUT_FILENO, "\x1b[2J", 4);
+			write(STDOUT_FILENO, "\x1b[H", 3);
+			exit(0);
+			break;
 
 		case CTRL_KEY('s'):
 			editorSave();
@@ -852,12 +852,12 @@ void editorProcessKeypress() {
 			}
 			break;
 
-    case ARROW_UP:
-    case ARROW_DOWN:
-    case ARROW_LEFT:
-    case ARROW_RIGHT:
-      editorMoveCursor(c);
-      break;
+		case ARROW_UP:
+		case ARROW_DOWN:
+		case ARROW_LEFT:
+		case ARROW_RIGHT:
+			editorMoveCursor(c);
+			break;
 
 		case CTRL_KEY('l'):
 		case '\x1b':
@@ -866,7 +866,7 @@ void editorProcessKeypress() {
 		default:
 			editorInsertChar(c);
 			break;
-  }
+	}
 }
 
 void initEditor() {
