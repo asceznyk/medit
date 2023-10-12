@@ -3,18 +3,18 @@
 #include "editor.h"
 
 int main(int argc, char *argv[]) {
-	enableRawMode();
-	initEditor();
+  enableRawMode();
+  initEditor();
 
-	if (argc >= 2) {
-		editorOpen(argv[1]);
-	}
+  if (argc >= 2) {
+    editorOpen(argv[1]);
+  }
 
-	while(1) {
-		editorRefreshScreen();
-		editorProcessKeypress();
-	}
+  while(1) {
+    editorRefreshScreen();
+    editorProcessKeypress();
+  }
 
-	return 0;
+  return 0;
 }
 
