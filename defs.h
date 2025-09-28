@@ -16,7 +16,7 @@
 #include <unistd.h>
 
 #define MEDIT_VERSION "0.0.1"
-#define MEDIT_TABSTOP 4
+#define MEDIT_TABSTOP 2
 
 #define HL_HIGHLIGHT_STRINGS (1<<0)
 #define HL_HIGHLIGHT_NUMBERS (1<<1)
@@ -95,14 +95,11 @@ char *py_hl_exts[] = {".py", NULL};
 char *py_hl_keywords[] = {
   "print>", "abs>", "all>", "ascii>", "int>", "bool>", "str>", 
   "dict>", "float>", "min>", "max>", "range>",
-
   "False|","None|","True|",
-
   "and","as","assert","async","await","break",
   "class","continue","def","del","elif","else","except","finally",
   "for","from","global","if","import","in","is","lambda","nonlocal",
   "not","or","pass","raise","return","try","while","with","yield", 
-
   NULL
 };
 
@@ -119,7 +116,6 @@ struct editorSyntax HLDB[] = {
 void die(const char *s) {
   write(STDOUT_FILENO, "\x1b[2J", 4);
   write(STDOUT_FILENO, "\x1b[H", 3);
-
   perror(s);
   exit(1);
 }
